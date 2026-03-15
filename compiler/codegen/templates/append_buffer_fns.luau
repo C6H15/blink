@@ -6,7 +6,7 @@ local buffer_template = [[
 local in_buffer = buffer.create(64)
 local in_cursor = 0
 local in_unknown: { any } = table.create(16)
-local in_unknown_cursor = 1
+local in_unknown_cursor = 0
 
 local out_buffer = buffer.create(1024)
 local out_cursor = 0
