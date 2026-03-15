@@ -451,6 +451,13 @@ local function gen_terminator(ctx: Context, terminator: lir.Terminator)
 			builder:dedent()
 			builder:append_line("end")
 		end
+	elseif terminator.kind == "continue" then
+		builder:append_line("continue")
+
+		if #ctx.block_queue > 0 then
+			builder:dedent()
+			builder:append_line("end")
+		end
 	else
 		weak_exhaustive_match(terminator.kind)
 	end

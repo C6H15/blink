@@ -98,6 +98,13 @@ local function term_return(values: { RValue }): TermReturn
 	}
 end
 
+local function term_continue(): types.TermContinue
+	return {
+		type = "terminator",
+		kind = "continue",
+	}
+end
+
 return table.freeze({
 	if_single = term_if_single,
 	if_chain = term_if_chain,
@@ -107,4 +114,5 @@ return table.freeze({
 	call = term_call,
 	rtrn = term_return,
 	while_loop = term_while,
+	ccontinue = term_continue,
 })

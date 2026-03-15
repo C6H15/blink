@@ -451,6 +451,11 @@ export type TermReturn = {
 	values: { RValue<any> },
 }
 
+export type TermContinue = {
+	type: "terminator",
+	kind: "continue",
+}
+
 --stylua: ignore
 export type Terminator = 
     | TermIf
@@ -461,6 +466,7 @@ export type Terminator =
 	| TermWhile
     | TermReturn
 	| TermIfChain
+	| TermContinue
 
 export type BasicBlock = {
 	type: "block",

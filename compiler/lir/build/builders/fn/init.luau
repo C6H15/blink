@@ -70,6 +70,7 @@ export type Builder = {
 	read remark: (Builder, text: string) -> (),
 
 	read rreturn: (Builder, values: { RValue }) -> (),
+	read ccontinue: (Builder) -> (),
 	read if_chain: (Builder, length: number, constructor: IfChainConstructor) -> (),
 	read if_single: (Builder, cond: Condition, body: Constructor) -> (),
 	read for_numeric: (Builder, iterations: RValue<number>, body: NumericLoopConstructor) -> (),
@@ -174,6 +175,10 @@ local function construct_fn(n_params: number, constructor: Constructor): { Basic
 
 	local function term_return(self: Builder, values: { RValue })
 		block.terminator = terminator.rtrn(values)
+	end
+
+	local function ccontinue(self: Builder)
+		block.terminator = terminator.ccontinue()
 	end
 
 	local function if_single(self: Builder, cond: Condition, body: Constructor)
@@ -323,6 +328,7 @@ local function construct_fn(n_params: number, constructor: Constructor): { Basic
 		remark = remark,
 
 		rreturn = term_return,
+		ccontinue = ccontinue,
 		if_chain = if_chain,
 		if_single = if_single,
 		for_numeric = for_numeric,
