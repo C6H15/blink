@@ -560,7 +560,7 @@ local function build_event_receive(ctx: Context, side: Side, block: fn.Builder, 
 				block:call(library.task.spawn(connection :: any, values :: any))
 			end
 
-			block:rreturn({})
+			block:ccontinue()
 		end)
 	elseif call == "ManySync" or call == "ManyAsync" then
 		local connections = projection.field(CONNECTIONS, constant.from_value(event_id))
@@ -574,7 +574,7 @@ local function build_event_receive(ctx: Context, side: Side, block: fn.Builder, 
 				end
 			end)
 
-			block:rreturn({})
+			block:ccontinue()
 		end)
 	end
 
