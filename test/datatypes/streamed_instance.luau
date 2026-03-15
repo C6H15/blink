@@ -10,7 +10,7 @@ local function append(builder: StringBuilder)
 end
 
 local function generate(seed: number)
-	return if seed % 2 == 0 then data_model_mock.instance_new("Instance") else nil
+	return data_model_mock.instance_new("Instance")
 end
 
 local datatype: Datatype = table.freeze({

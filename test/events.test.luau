@@ -7,6 +7,7 @@ local hir = require("@compiler/hir")
 local luau = require("@lute/luau")
 local path = require("@util/path")
 local string_builder = require("@util/string_builder")
+local tableext = require("@std/tableext")
 
 type Tiniest = typeof(require("@vendor/tiniest/tiniest_for_lute").configure({}))
 
@@ -195,18 +196,18 @@ return function(tiniest: Tiniest)
 	end
 
 	local targets = compile_events(events)
-	local server, server_events = load_server(targets)
-	local _, player, client_events = load_client(targets, server)
+	local universe, server_module = load_server(targets)
+	local _, player, client_module = load_client(targets, universe)
 
 	for name, event in events do
 		test(name, function()
-			local server_event = server_events.exports[name]
-			local client_event = client_events.exports[name]
+			local server_event = server_module.exports[name]
+			local client_event = client_module.exports[name]
 
-			local sender_api
-			local sender_event
-			local receiver_event
-			local sender_payload
+			local payload
+			local incoming_event
+			local outgoing_event
+			local outgoing_module
 
 			local data = table.create(#event.data) :: { any }
 			for seed = 1, 2 do
@@ -216,43 +217,43 @@ return function(tiniest: Tiniest)
 
 				local from = event.from == "Both" and (seed % 2 == 0 and "Server" or "Client") or event.from
 				if from == "Server" then
-					sender_api = server_events
-					receiver_event = client_event :: any
-					sender_event = server_event :: any
-					sender_payload = { player, unpack(data) }
+					payload = { player, unpack(data) }
+					incoming_event = client_event :: any
+					outgoing_event = server_event :: any
+					outgoing_module = server_module
 				else
-					sender_api = client_events
-					receiver_event = server_event
-					sender_event = client_event
-					sender_payload = data
+					payload = data
+					incoming_event = server_event
+					outgoing_event = client_event
+					outgoing_module = client_module
 				end
 
 				local received_data: { [number]: any, n: number }?
 				if event.call == "Polling" then
-					sender_event.fire(unpack(sender_payload))
-					sender_api.step_replication()
-					received_data = table.pack((receiver_event :: any).iter()())
+					outgoing_event.fire(unpack(payload))
+					outgoing_module.step_replication()
+					received_data = table.pack((incoming_event :: any).iter()())
 
-					for _ in (receiver_event :: any).iter() do
+					for _ in (incoming_event :: any).iter() do
 						expect(true).never_is_true()
 					end
 
 					expect(received_data[1]).is(1)
 					shift_down(received_data)
 				else
-					local disconnect = receiver_event.on(function(...: any)
+					local disconnect = incoming_event.on(function(...: any)
 						expect(received_data).never_exists()
 						received_data = table.pack(...)
 					end)
-					sender_event.fire(unpack(sender_payload))
-					sender_api.step_replication()
+					outgoing_event.fire(unpack(payload))
+					outgoing_module.step_replication()
 					disconnect()
 				end
 
 				expect(received_data).exists()
 				assert(received_data) -- type checker
 
-				if receiver_event == server_event then
+				if incoming_event == server_event then
 					local received_player: PlayerMock = received_data[1]
 					shift_down(received_data)
 					expect(received_player.UserId).is(player.UserId)
@@ -265,4 +266,98 @@ return function(tiniest: Tiniest)
 			end
 		end)
 	end
+
+	test("batch", function()
+		for seed = 1, 2 do
+			local outgoing_data_map: { { any } } = {}
+			local incoming_data_map: { { [number]: any, n: number } } = {}
+			local disconnect_fns_map: { () -> () } = {}
+			local event_names = tableext.keys(events)
+
+			for event_index, name in event_names do
+				local event = events[name]
+				if event.type ~= "Reliable" then
+					continue
+				end
+
+				local server_event = server_module.exports[name]
+				local client_event = client_module.exports[name]
+
+				local outgoing_data = table.create(#event.data)
+				for index, datatype in event.data do
+					outgoing_data[index] = datatype.generate(seed)
+				end
+
+				local payload = outgoing_data
+				local incoming_event = server_event
+				local outgoing_event = client_event
+
+				local from = event.from == "Both" and (seed % 2 == 0 and "Server" or "Client") or event.from
+				if from == "Server" then
+					payload = { player, unpack(outgoing_data) }
+					incoming_event = client_event
+					outgoing_event = server_event :: any
+				end
+
+				outgoing_data_map[event_index] = outgoing_data
+				outgoing_event.fire(unpack(payload))
+
+				if event.call ~= "Polling" then
+					disconnect_fns_map[event_index] = incoming_event.on(function(...: any)
+						expect(incoming_data_map[event_index]).never_exists()
+						incoming_data_map[event_index] = table.pack(...)
+					end)
+				end
+			end
+
+			server_module.step_replication()
+			client_module.step_replication()
+
+			for event_index, name in event_names do
+				local event = events[name]
+				if event.type ~= "Reliable" then
+					continue
+				end
+
+				local outgoing_data = outgoing_data_map[event_index]
+				expect(outgoing_data).exists()
+
+				local server_event = server_module.exports[name]
+				local client_event = client_module.exports[name]
+
+				local from = event.from == "Both" and (seed % 2 == 0 and "Server" or "Client") or event.from
+				local incoming_event = server_event
+				if from == "Server" then
+					incoming_event = client_event :: any
+				end
+
+				local incoming_data: { [number]: any, n: number }?
+				if event.call == "Polling" then
+					incoming_data = table.pack((incoming_event :: any).iter()())
+					for _ in (incoming_event :: any).iter() do
+						expect(true).never_is_true()
+					end
+
+					expect(incoming_data[1]).is(1)
+					shift_down(incoming_data)
+				else
+					disconnect_fns_map[event_index]()
+					incoming_data = incoming_data_map[event_index]
+				end
+
+				expect(incoming_data).exists()
+
+				if incoming_event == server_event then
+					local received_player: PlayerMock = incoming_data[1]
+					shift_down(incoming_data)
+					expect(received_player.UserId).is(player.UserId)
+				end
+
+				for index, expected_value in outgoing_data do
+					local received_value = incoming_data[index]
+					expect(received_value).is(expected_value)
+				end
+			end
+		end
+	end)
 end
