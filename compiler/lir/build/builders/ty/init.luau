@@ -219,9 +219,7 @@ builders.array = table.freeze({
 		local register = block:store(library.table.create(len))
 
 		block:for_numeric(len, function(block, index)
-			local element = read_ty(props, block, array.of)
-			local position = projection.field(register :: any, index)
-			block:store(element, position)
+			read_ty(props, block, array.of, projection.field(register :: any, index))
 		end)
 
 		if into then
