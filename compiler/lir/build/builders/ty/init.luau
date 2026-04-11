@@ -132,6 +132,7 @@ builders = {
 	buffer = require("@self/luau/buffer"),
 	string = require("@self/luau/string"),
 	vector = require("@self/luau/vector"),
+	integer = require("@self/luau/integer"),
 	numeral = ty_numeral,
 	boolean = require("@self/luau/boolean"),
 
@@ -366,6 +367,8 @@ do
 			return panic("cannot get type of generic")
 		elseif tty.kind == "buffer" then
 			return "buffer"
+		elseif tty.kind == "integer" then
+			return "integer"
 		elseif tty.kind == "vector" then
 			return "Vector3"
 		elseif tty.kind == "numeral" or tty.kind == "number_literal" then

@@ -142,6 +142,10 @@ local function ty_vector(ctx: Context, expr: ast.ExprReference): ty.Vector
 	return ty.vector(expr, axes, magnitude)
 end
 
+local function ty_integer(ctx: Context, expr: ast.ExprReference): ty.Integer
+	return ty.integer(expr, range)
+end
+
 local function ty_boolean(ctx: Context, expr: ast.ExprReference): ty.Boolean
 	return ty.boolean(expr)
 end
@@ -248,6 +252,7 @@ local PRIMITIVE_BUILDERS: { [string]: ((ctx: Context, expr: ast.ExprReference, p
 	string = ty_string,
 	buffer = ty_buffer,
 	vector = ty_vector,
+	integer = ty_integer,
 	boolean = ty_boolean,
 	unknown = ty_unknown,
 	Enum = ty_roblox_enum,

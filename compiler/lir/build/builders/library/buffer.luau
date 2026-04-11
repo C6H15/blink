@@ -65,6 +65,14 @@ local function write_number(format: string)
 	end
 end
 
+local function read_integer(advance: Advance): Call<integer>
+	return projection.call(index("buffer", "readinteger"), { READ_BUFFER, advance })
+end
+
+local function write_integer(allocate: Register<number>, value: RValue<integer>): Call<nil>
+	return projection.call(index("buffer", "writeinteger"), { WRITE_BUFFER, allocate, value })
+end
+
 return table.freeze({
 	len = len,
 	copy = copy,
@@ -103,7 +111,11 @@ return table.freeze({
 		write = write_number("f64"),
 	},
 	string = {
-		read = readstring,
-		write = writestring,
+		read = read_string,
+		write = write_string,
+	},
+	integer = {
+		read = read_integer,
+		write = write_integer,
 	},
 })

@@ -16,6 +16,7 @@ export type Axis = types.Axis
 export type Vector = types.Vector
 export type Buffer = types.Buffer
 export type String = types.String
+export type Integer = types.Integer
 export type Boolean = types.Boolean
 export type Nil = types.Nil
 export type StringLiteral = types.StringLiteral
@@ -78,6 +79,13 @@ local function create_string(node: Expression?, length: SealedRange?): String
 		kind = "string",
 		node = node,
 		length = length,
+	}
+end
+
+local function create_integer(node: Expression?): Integer
+	return {
+		kind = "integer",
+		node = node,
 	}
 end
 
@@ -332,6 +340,7 @@ return table.freeze({
 	string = create_string,
 	vector = create_vector,
 	buffer = create_buffer,
+	integer = create_integer,
 	boolean = create_boolean,
 	nnil = create_nil,
 

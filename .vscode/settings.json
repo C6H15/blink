@@ -14,6 +14,11 @@
 
 	"luau-lsp.fflags.enableNewSolver": true,
 	"luau-lsp.fflags.enableByDefault": false,
+	"luau-lsp.fflags.override": {
+		"LuauConst2": "true",
+		"LuauIntegerType": "true",
+		"LuauIntegerLibrary": "true",
+	},
 
 	"luau-lsp.platform.type": "roblox",
 	"luau-lsp.sourcemap.enabled": false,

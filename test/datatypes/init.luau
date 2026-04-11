@@ -11,6 +11,7 @@ local single_primitives = {
 	string = require("@self/string"),
 	buffer = require("@self/buffer"),
 	vector = require("@self/vector"),
+	integer = require("@self/integer"),
 	boolean = require("@self/boolean"),
 	Color3 = require("@self/color3"),
 	CFrame = require("@self/cframe"),
