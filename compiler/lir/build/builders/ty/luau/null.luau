@@ -2,7 +2,6 @@ local attributes = require("@config/attributes")
 local ty = require("@ty")
 local types = require("@lir/types")
 
-local constant = require("@builders/constant")
 local fn = require("@builders/fn")
 
 local context = require("@lir/build/context")
