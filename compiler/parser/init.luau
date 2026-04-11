@@ -77,8 +77,8 @@ end
 
 local function expect<T>(ctx: Context, kind: T & TokenKind): lexer.TokenBase<T>
 	local token = peek(ctx)
-	if token.kind == kind :: any then
-		return consume(ctx) :: any
+	if token.kind == kind then
+		return consume(ctx)
 	end
 
 	return report.expect_token(token, kind)

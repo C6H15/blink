@@ -6,8 +6,6 @@ local constant = require("@builders/constant")
 local globals = require("@builders/globals")
 local projection = require("@builders/projection")
 
-type BufferDataFormat = | "u8" | "u16" | "u32" | "i8" | "i16" | "i32" | "f32" | "f64"
-
 type LValue<T> = types.LValue<T>
 type RValue<T> = types.RValue<T>
 type Register<T> = types.RegisterId<T>
@@ -44,29 +42,26 @@ local function copy(
 	source_offset: RValue<number>?,
 	count: RValue<number>?
 ): Call<nil>
-	return projection.call(
-		index("buffer", "copy"),
-		{ target, target_offset, source, source_offset, count } :: { RValue<any> }
-	)
+	return projection.call(index("buffer", "copy"), { target, target_offset, source, source_offset, count })
 end
 
-local function readstring(advance: Advance, bytes: RValue<number>): Call<string>
+local function read_string(advance: Advance, bytes: RValue<number>): Call<string>
 	return projection.call(index("buffer", "readstring"), { READ_BUFFER, advance, bytes })
 end
 
-local function writestring(allocate: Register<number>, bytes: RValue<number>, value: RValue<string>): Call<nil>
+local function write_string(allocate: Register<number>, bytes: RValue<number>, value: RValue<string>): Call<nil>
 	return projection.call(index("buffer", `writestring`), { WRITE_BUFFER, allocate, value, bytes })
 end
 
-local function read_ctor(format: BufferDataFormat)
+local function read_number(format: string)
 	return function(advance: Advance): Call<number>
-		return projection.call(index("buffer", `read{format}`), { READ_BUFFER, advance } :: { RValue<any> })
+		return projection.call(index("buffer", `read{format}`), { READ_BUFFER, advance })
 	end
 end
 
-local function write_ctor(format: BufferDataFormat)
+local function write_number(format: string)
 	return function(allocate: Register<number>, value: RValue<number>): Call<nil>
-		return projection.call(index("buffer", `write{format}`), { WRITE_BUFFER, allocate, value } :: { RValue<any> })
+		return projection.call(index("buffer", `write{format}`), { WRITE_BUFFER, allocate, value })
 	end
 end
 
@@ -76,36 +71,36 @@ return table.freeze({
 	create = create,
 
 	u8 = {
-		read = read_ctor("u8"),
-		write = write_ctor("u8"),
+		read = read_number("u8"),
+		write = write_number("u8"),
 	},
 	u16 = {
-		read = read_ctor("u16"),
-		write = write_ctor("u16"),
+		read = read_number("u16"),
+		write = write_number("u16"),
 	},
 	u32 = {
-		read = read_ctor("u32"),
-		write = write_ctor("u32"),
+		read = read_number("u32"),
+		write = write_number("u32"),
 	},
 	i8 = {
-		read = read_ctor("i8"),
-		write = write_ctor("i8"),
+		read = read_number("i8"),
+		write = write_number("i8"),
 	},
 	i16 = {
-		read = read_ctor("i16"),
-		write = write_ctor("i16"),
+		read = read_number("i16"),
+		write = write_number("i16"),
 	},
 	i32 = {
-		read = read_ctor("i32"),
-		write = write_ctor("i32"),
+		read = read_number("i32"),
+		write = write_number("i32"),
 	},
 	f32 = {
-		read = read_ctor("f32"),
-		write = write_ctor("f32"),
+		read = read_number("f32"),
+		write = write_number("f32"),
 	},
 	f64 = {
-		read = read_ctor("f64"),
-		write = write_ctor("f64"),
+		read = read_number("f64"),
+		write = write_number("f64"),
 	},
 	string = {
 		read = readstring,

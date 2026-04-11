@@ -23,7 +23,6 @@ end
 local function create<T>(name: string): Symbols<T>
 	return {
 		name = name,
-		parent = nil :: any,
 		values = {},
 		children = {},
 	}

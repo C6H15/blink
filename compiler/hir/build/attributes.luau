@@ -8,8 +8,8 @@ type Attributes = attributes.Attributes
 type AttributeNode = ast.Attribute
 type AttributeNodes = { AttributeNode }
 
-local TARGETS: { [string]: true } = compilation.TARGETS :: any
-local PROFILES: { [string]: true } = compilation.PROFILES :: any
+local TARGETS = compilation.TARGETS :: { [string]: true }
+local PROFILES = compilation.PROFILES :: { [string]: true }
 
 local function set_to_array<T>(set: { [T]: true }, sort_comp: ((a: T, b: T) -> boolean)?): { T }
 	local array = {}
@@ -40,13 +40,13 @@ local function attr_target(attribute: AttributeNode): compilation.Target
 	local target = attribute.args[1]
 	if target.kind ~= "string" then
 		-- LUAU
-		return report.expect_node(target :: any, "string", target.kind)
+		return report.expect_node(target, "string", target.kind)
 	end
 
 	local value = target.value
 	if TARGETS[value] ~= true then
 		-- LUAU
-		return report.expect_node_one_of(target :: any, set_to_array(TARGETS), value)
+		return report.expect_node_one_of(target, set_to_array(TARGETS), value)
 	end
 
 	return value :: compilation.Target
@@ -60,13 +60,13 @@ local function attr_profile(attribute: AttributeNode): compilation.Profile
 	local profile = attribute.args[1]
 	if profile.kind ~= "string" then
 		-- LUAU
-		return report.expect_node(profile :: any, "string", profile.kind)
+		return report.expect_node(profile, "string", profile.kind)
 	end
 
 	local value = profile.value :: string
 	if PROFILES[value] ~= true then
 		-- LUAU
-		return report.expect_node_one_of(profile :: any, set_to_array(PROFILES), value)
+		return report.expect_node_one_of(profile, set_to_array(PROFILES), value)
 	end
 
 	return value :: compilation.Profile

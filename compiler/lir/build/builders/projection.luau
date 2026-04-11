@@ -12,7 +12,7 @@ type Constant<T> = types.Constant<T>
 
 type Base = types.LValue<any> | Constant<string>
 
-local function proj_call<T>(base: Base, args: { RValue<T> }): any
+local function proj_call(base: Base, args: { any }): any
 	return {
 		__phantom_type = nil :: any,
 		type = "projection",
@@ -42,7 +42,7 @@ local function proj_index<T>(base: Base, element: types.Constant<string>): any
 	}
 end
 
-local function proj_namecall<T>(base: Base, method: Constant<string>, args: { RValue<T> }): any
+local function proj_namecall<T>(base: Base, method: Constant<string>, args: { any }): any
 	return {
 		__phantom_type = nil :: any,
 		type = "projection",

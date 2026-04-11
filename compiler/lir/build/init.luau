@@ -447,7 +447,7 @@ local function build_event(ctx: Context, decl: Event, event_id: number): EventEx
 				block:call(library.RemoteEvent.fire_client(UNRELIABLE_EVENT, args :: { any }))
 			else
 				local new_buffer = copy_outgoing_buffer(block)
-				local player_save = projection.field(globals.players_map, player :: any)
+				local player_save = projection.field(globals.players_map, player)
 				state.update_save(block, player_save, new_buffer, OUTGOING.cursor)
 			end
 		end)

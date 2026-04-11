@@ -187,7 +187,7 @@ builders.map = table.freeze({
 		local register = block:store(structure.map({}))
 
 		block:for_numeric(len, function(block)
-			local key = read_ty(props, block, map.index)
+			local key = read_ty(props, block, map.index) :: Register<any>
 			read_ty(props, block, map.value, projection.field(register, key))
 		end)
 

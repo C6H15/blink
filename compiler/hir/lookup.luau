@@ -65,8 +65,7 @@ local function follow(hir: Hir, ty: ty.Ty): ty.Ty
 		return follow(hir, ty.body)
 	end
 
-	-- SOLVER BUG
-	return ty :: any
+	return ty
 end
 
 return table.freeze({

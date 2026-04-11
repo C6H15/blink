@@ -13,15 +13,15 @@ local function luau_warn(...: RValue<string>): Call<nil>
 end
 
 local function luau_print(...: RValue<any>): Call<nil>
-	return projection.call(constant.from_value("print"), { ... } :: any)
+	return projection.call(constant.from_value("print"), { ... })
 end
 
 local function luau_error(message: string): Call<nil>
-	return projection.call(constant.from_value("error"), { constant.from_value(message) } :: any)
+	return projection.call(constant.from_value("error"), { constant.from_value(message) })
 end
 
 local function luau_error_rvalue(message: RValue<string>): Call<nil>
-	return projection.call(constant.from_value("error"), { message } :: any)
+	return projection.call(constant.from_value("error"), { message })
 end
 
 local function luau_pcall(fn: RValue<any>, ...: RValue<any>): Call<any>

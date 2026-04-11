@@ -130,7 +130,7 @@ local function tokenize(input: file.File): { Token }
 		return (position - 1)
 	end
 
-	local tokens: { Token } = table.create(64) :: any
+	local tokens = table.create(64) :: { Token }
 
 	local function create_token(kind: TokenKind, span: span.Span): Token
 		return { kind = kind, span = span } :: Token
