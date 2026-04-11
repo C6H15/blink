@@ -841,23 +841,27 @@ RunClosure("Color3 Array", function()
 end)
 
 RunClosure("DateTime", function()
-	local DateTime = BaseEnvironment.DateTime.fromUnixTimestamp(math.random(1, 2 ^ 30))
-	local Serialized = Server.DateSeconds.Write(DateTime)
-	local Deserialized = Server.DateSeconds.Read(Serialized)
-	assert(
-		DateTime.UnixTimestamp == Deserialized.UnixTimestamp,
-		`Expected timestamp {DateTime.UnixTimestamp}, got {Deserialized.UnixTimestamp}`
-	)
+	for n = 1, 30 do
+		local DateTime = BaseEnvironment.DateTime.fromUnixTimestamp(2 ^ n)
+		local Serialized = Server.DateSeconds.Write(DateTime)
+		local Deserialized = Server.DateSeconds.Read(Serialized)
+		assert(
+			DateTime.UnixTimestamp == Deserialized.UnixTimestamp,
+			`Expected timestamp {DateTime.UnixTimestamp}, got {Deserialized.UnixTimestamp}`
+		)
+	end
 end)
 
 RunClosure("DateTimeMillis", function()
-	local DateTime = BaseEnvironment.DateTime.fromUnixTimestampMillis(math.random(1, 2 ^ 30))
-	local Serialized = Server.DateMilliseconds.Write(DateTime)
-	local Deserialized = Server.DateMilliseconds.Read(Serialized)
-	assert(
-		DateTime.UnixTimestampMillis == Deserialized.UnixTimestampMillis,
-		`Expected timestamp {DateTime.UnixTimestampMillis}, got {Deserialized.UnixTimestampMillis}`
-	)
+	for n = 1, 30 do
+		local DateTime = BaseEnvironment.DateTime.fromUnixTimestampMillis(2 ^ n)
+		local Serialized = Server.DateMilliseconds.Write(DateTime)
+		local Deserialized = Server.DateMilliseconds.Read(Serialized)
+		assert(
+			DateTime.UnixTimestampMillis == Deserialized.UnixTimestampMillis,
+			`Expected timestamp {DateTime.UnixTimestampMillis}, got {Deserialized.UnixTimestampMillis}`
+		)
+	end
 end)
 
 RunClosure("BrickColor", function()
