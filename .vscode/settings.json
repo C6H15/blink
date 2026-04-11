@@ -10,20 +10,17 @@
 	"editor.insertSpaces": false,
 	"files.eol": "\n",
 
-	"luau-lsp.plugin.enabled": false,
-	"luau-lsp.fflags.enableNewSolver": true,
-	"luau-lsp.fflags.enableByDefault": false,
-	"luau-lsp.fflags.sync": false,
-	"luau-lsp.completion.enableFragmentAutocomplete": true,
-	
-	"luau-lsp.sourcemap.enabled": false,
-	
 	"luau-lsp.diagnostics.workspace": true,
 
+	"luau-lsp.fflags.enableNewSolver": true,
+	"luau-lsp.fflags.enableByDefault": false,
+
 	"luau-lsp.platform.type": "roblox",
+	"luau-lsp.sourcemap.enabled": false,
+	"luau-lsp.studioPlugin.enabled": false,
+
 	"luau-lsp.completion.imports.suggestServices": false,
 	"luau-lsp.completion.imports.suggestRequires": true,
-	
 	"luau-lsp.completion.imports.stringRequires.enabled": true,
 	
 	"luau-lsp.ignoreGlobs": [
