@@ -46,6 +46,18 @@ type ServerAPI = {
 local FILE = "functions"
 local TEMP_PATH = path.from_string("./temp")
 
+local function await(routine: thread, timeout: number): boolean
+	local elapsed = 0
+	while coroutine.status(routine) ~= "dead" do
+		elapsed += task.wait()
+		if elapsed >= timeout then
+			return false
+		end
+	end
+
+	return true
+end
+
 local function create_function(data: Data, ret: Data): Function
 	return table.freeze({
 		data = data,
@@ -169,7 +181,7 @@ return function(tiniest: Tiniest)
 			end)
 
 			local returned_data
-			local invoke_task = task.create(function()
+			local invoke_thread = task.spawn(function()
 				returned_data = { client_funct.invoke(unpack(data)) }
 				return nil :: any
 			end)
@@ -177,8 +189,8 @@ return function(tiniest: Tiniest)
 			client_functions.step_replication()
 			server_functions.step_replication()
 
-			task.await(invoke_task)
-			expect(invoke_task.success).is(true)
+			expect(await(invoke_thread, 5)).is(true)
+			expect(returned_data).exists()
 
 			disconnect()
 

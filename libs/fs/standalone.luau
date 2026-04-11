@@ -16,7 +16,7 @@ local io_error = types.io_error
 local function read_file(target: Path): Result<File>
 	local path_str = path.to_string(target)
 	local success, contents = pcall(function()
-		return fs.readfiletostring(path_str)
+		return fs.readFileToString(path_str)
 	end)
 
 	if success == false then
@@ -34,7 +34,7 @@ end
 local function read_directory(target: Path): Result<{ string }>
 	local path_str = path.to_string(target)
 	local success, entries = pcall(function()
-		return fs.listdirectory(path_str)
+		return fs.listDirectory(path_str)
 	end)
 
 	if success == false then
@@ -52,7 +52,7 @@ end
 local function read_string_from_file(target: Path): Result<string>
 	local path_str = path.to_string(target)
 	local success, contents = pcall(function()
-		return fs.readfiletostring(path_str)
+		return fs.readFileToString(path_str)
 	end)
 
 	if success == false then
@@ -65,7 +65,7 @@ end
 local function write_directory(target: Path): Result
 	local path_str = path.to_string(target)
 	local success, err = pcall(function()
-		fs.createdirectory(path_str)
+		fs.createDirectory(path_str)
 		return nil
 	end)
 
@@ -79,7 +79,7 @@ end
 local function write_string_to_file(target: Path, contents: string): Result
 	local path_str = path.to_string(target)
 	local success, err = pcall(function()
-		fs.writestringtofile(path_str, contents)
+		fs.writeStringToFile(path_str, contents)
 		return nil
 	end)
 
@@ -107,7 +107,7 @@ end
 local function remove_directory(target: Path): Result
 	local path_str = path.to_string(target)
 	local success, err = pcall(function()
-		fs.removedirectory(path_str)
+		fs.removeDirectory(path_str)
 		return nil
 	end)
 
@@ -161,9 +161,9 @@ local function metadata(target: Path): Result<types.Metadata>
 
 	local metadata: types.Metadata = {
 		kind = raw_metadata.type,
-		created_at = raw_metadata.created,
-		modified_at = raw_metadata.modified,
-		accessed_at = raw_metadata.accessed,
+		created_at = raw_metadata.created:toSeconds(),
+		modified_at = raw_metadata.modified:toSeconds(),
+		accessed_at = raw_metadata.accessed:toSeconds(),
 		permissions = {
 			read_only = raw_metadata.permissions.readonly,
 		},

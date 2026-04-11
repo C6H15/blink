@@ -15,15 +15,7 @@ return table.freeze({
 	bit32 = bit32,
 	debug = debug,
 	assert = assert,
-	task = table.freeze({
-		spawn = function(f, ...)
-			local task = task.create(f, ...)
-			if task.success == false then
-				print(debug.traceback(task.co, tostring(task.result)))
-			end
-			return task.co
-		end,
-	}),
+	task = task,
 	math = math,
 	table = table,
 	buffer = buffer,

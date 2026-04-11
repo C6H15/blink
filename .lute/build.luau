@@ -51,9 +51,9 @@ end
 
 do
 	if fs.exists(RELEASE_DIR) then
-		fs.removedirectory(RELEASE_DIR, { recursive = true })
+		fs.removeDirectory(RELEASE_DIR, { recursive = true })
 	end
-	fs.createdirectory(RELEASE_DIR)
+	fs.createDirectory(RELEASE_DIR)
 end
 
 local start = os.clock()
