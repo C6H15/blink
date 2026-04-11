@@ -371,7 +371,7 @@ local function replicate_instance(instance: InstanceMock, from: DataModelMock, t
 
 	local ancestor = to
 	while true do
-		local to_clone = table.remove(hierarchy, 1)
+		local to_clone = table.remove(hierarchy, 1) :: InstanceMock?
 		if to_clone == nil then
 			return ancestor
 		end
