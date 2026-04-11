@@ -10,6 +10,7 @@ export type Identifier = types.Identifier
 export type GenericDef = types.GenericDef
 export type GenericsDef = types.GenericsDef
 export type GenericsArgs = types.GenericsArgs
+export type ExprNil = types.ExprNil
 export type ExprNumber = types.ExprNumber
 export type ExprString = types.ExprString
 export type ExprBoolean = types.ExprBoolean

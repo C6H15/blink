@@ -250,6 +250,16 @@ local function generics(ctx: Context): ast.GenericsDef
 	}
 end
 
+local function expr_nil(ctx: Context): ast.ExprNil
+	local token = expect(ctx, "nil")
+	return {
+		id = next_node_id(ctx),
+		span = token.span,
+		kind = "nil",
+		value = nil,
+	}
+end
+
 local function expr_boolean(ctx: Context): ast.ExprBoolean
 	local token = consume(ctx)
 	if token.kind == "true" then
@@ -498,7 +508,9 @@ local function expr_discriminated_union_variant(ctx: Context): ast.ExprDiscrimin
 	local key
 	local token = peek(ctx)
 
-	if token.kind == "true" or token.kind == "false" then
+	if token.kind == "nil" then
+		key = expr_nil(ctx)
+	elseif token.kind == "true" or token.kind == "false" then
 		key = expr_boolean(ctx)
 	elseif token.kind == "string" then
 		key = expr_string(ctx)
@@ -912,6 +924,8 @@ function expression(ctx: Context): ast.Expression
 		expr = expr_string(ctx)
 	elseif token.kind == "true" or token.kind == "false" then
 		expr = expr_boolean(ctx)
+	elseif token.kind == "nil" then
+		expr = expr_nil(ctx)
 	end
 
 	if expr == nil then

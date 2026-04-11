@@ -22,8 +22,9 @@ type LValue<T = any> = types.LValue<T>
 type RValue<T = any> = types.RValue<T>
 type Register<T = any> = types.RegisterId<T>
 
-local function build_read<A>(props: ReadProps, block: Builder, _: Nil, into: LValue<any>?): Register<A>
-	return block:store(constant.null, into)
+local function build_read(props: ReadProps, block: Builder, _: Nil, into: LValue<any>?): Register<nil>
+	-- noop
+	return into :: Register<nil> or block:reserve()
 end
 
 local function build_write(props: WriteProps, block: Builder, nnil: Nil, value: RValue): ()

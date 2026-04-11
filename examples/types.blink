@@ -1,5 +1,7 @@
 option types_output = "./out/types"
 
+type null = nil
+
 type vec3 = vector
 type vec2 = vector<f32, f32, 0>
 type vec1 = vector<f32, 0, 0>

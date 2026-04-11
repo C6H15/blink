@@ -11,7 +11,7 @@ type TyKind = ty.TyKind
 type Token = lexer.Token
 type TokenKind = lexer.TokenKind
 type Identifier = ast.Identifier
-export type Entry = Identifier | ast.ExprNumber | ast.ExprString | ast.ExprBoolean
+export type Entry = Identifier | ast.ExprLiteral
 
 local function path_to_segments(path: ast.Path): { string }
 	local segments: { string } = {}

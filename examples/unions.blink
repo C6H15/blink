@@ -30,3 +30,10 @@ type state =
 
 type bool = true | false
 type length = 0 | 5 | 10
+
+type charm_state = union "__none" {
+	__none {},
+	nil {
+		value: u8
+	}
+}

@@ -26,6 +26,7 @@ export type Token =
 	| TokenBase<"import">
 	| TokenBase<"function">
 	--> literals
+	| TokenBase<"nil">
 	| TokenBase<"true">
 	| TokenBase<"false">
 	| TokenBase<"number">
@@ -192,6 +193,7 @@ local function tokenize(input: file.File): { Token }
 
 			if
 				value == "as"
+				or value == "nil"
 				or value == "map"
 				or value == "from"
 				or value == "type"

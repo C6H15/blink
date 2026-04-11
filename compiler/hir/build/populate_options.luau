@@ -2,6 +2,7 @@ local ast = require("@ast")
 local compilation = require("@config/compilation")
 local options = require("@config/options")
 local report = require("@compiler/report")
+local typeforge = require("@util/typeforge")
 local types = require("@hir/types")
 
 type Hir = types.Hir
@@ -26,7 +27,7 @@ local function record_option(file_options: FileOptions, seen_options: SeenOption
 	end
 
 	local value = value_expr.value
-	if option_config.values and table.find(option_config.values, value) == nil then
+	if option_config.values and table.find(option_config.values, value :: typeforge.NonNil<typeof(value)>) == nil then
 		return report.invalid_option_value(stat, option_config.values)
 	end
 

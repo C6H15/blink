@@ -77,6 +77,10 @@ end
 
 --> Luau Primitives
 
+local function ty_nil(ctx: Context, expr: ast.ExprNil): ty.Nil
+	return ty.nnil(expr)
+end
+
 local function ty_string_literal(ctx: Context, expr: ast.ExprString): ty.StringLiteral
 	return ty.string_literal(expr, expr.value)
 end
@@ -315,6 +319,8 @@ local function ty_optional(ctx: Context, expr: ast.ExprOptional): ty.Union
 	return ty.union(expr, { of, ty.nnil(expr) })
 end
 
+local NIL_SYMBOL = newproxy()
+
 local function ty_discriminated_union(ctx: Context, expr: ast.ExprDiscriminatedUnion): ty.DiscriminatedUnion
 	local tag = expr.tag.value
 	local variants: { ty.Variant } = {}
@@ -322,9 +328,11 @@ local function ty_discriminated_union(ctx: Context, expr: ast.ExprDiscriminatedU
 
 	for index, variant_node in expr.variants do
 		local key_node = variant_node.key
-		local previous = variants_set[key_node.value]
-		if previous ~= nil then
-			report.duplicate_entry(previous.key, key_node, expr)
+
+		local value_hash = key_node.value or NIL_SYMBOL
+		local previous_entry = variants_set[value_hash]
+		if previous_entry ~= nil then
+			report.duplicate_entry(previous_entry.key, key_node, expr)
 		end
 
 		local value_node = variant_node.value
@@ -343,7 +351,7 @@ local function ty_discriminated_union(ctx: Context, expr: ast.ExprDiscriminatedU
 		table.insert(struct.fields, 1, ty.field(key_node :: ast.Expression, tag, key_ty))
 
 		variants[index] = variant_ty
-		variants_set[key_node.value] = variant_node
+		variants_set[value_hash] = variant_node
 	end
 
 	return ty.discriminated_union(expr, tag, variants)
@@ -420,6 +428,8 @@ function expression(ctx: Context, expr: ast.Expression | ast.Identifier, generic
 	local tty: Ty
 	if expr.kind == "map" then
 		tty = ty_map(ctx, expr)
+	elseif expr.kind == "nil" then
+		tty = ty_nil(ctx, expr)
 	elseif expr.kind == "array" then
 		tty = ty_array(ctx, expr)
 	elseif expr.kind == "union" then

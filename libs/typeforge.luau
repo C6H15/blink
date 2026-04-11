@@ -70,4 +70,27 @@ export type function Drop(union: type, value: type)
 	return types.unionof(table.unpack(components))
 end
 
+export type function NonNil(t: type)
+	if not t:is("union") then
+		return t
+	end
+
+	local components = t:components()
+	local new_components = table.create(#components) :: { type }
+
+	for _, component in components do
+		if component.tag ~= "nil" then
+			table.insert(new_components, component)
+		end
+	end
+
+	if #new_components == 0 then
+		return types.singleton(nil)
+	elseif #new_components == 1 then
+		return new_components[1]
+	end
+
+	return types.unionof(table.unpack(new_components))
+end
+
 return nil

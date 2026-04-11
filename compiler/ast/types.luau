@@ -48,6 +48,13 @@ export type GenericsArgs = {
 	read values: { Expression },
 }
 
+export type ExprNil = {
+	read id: NodeId,
+	read span: vector,
+	read kind: "nil",
+	read value: nil,
+}
+
 export type ExprNumber = {
 	read id: NodeId,
 	read span: vector,
@@ -69,7 +76,12 @@ export type ExprBoolean = {
 	read value: boolean,
 }
 
-export type ExprLiteral = | ExprNumber | ExprString | ExprBoolean
+--stylua: ignore
+export type ExprLiteral = 
+	| ExprNil 
+	| ExprNumber 
+	| ExprString 
+	| ExprBoolean
 
 --- [name]: value
 export type ExprField = {
@@ -143,7 +155,7 @@ export type ExprDiscriminatedUnionVariant = {
 	read id: NodeId,
 	read span: vector,
 	read kind: "variant",
-	read key: | Identifier | ExprNumber | ExprString | ExprBoolean,
+	read key: Identifier | ExprLiteral,
 	read value: ExprStruct,
 }
 
@@ -174,9 +186,7 @@ export type Expression =
 	| ExprField
 	| ExprDiscriminatedUnion
 	| ExprDiscriminatedUnionVariant
-	| ExprNumber
-	| ExprString
-	| ExprBoolean
+	| ExprLiteral
 	| ExprOptional
 	| ExprReference
 
