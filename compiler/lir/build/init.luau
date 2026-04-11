@@ -822,7 +822,14 @@ local function build_receive_connection(ctx: Context, side: Side, receivables: {
 		block:store(packet_unknowns, INCOMING.unknown)
 		block:store(constant.zero, INCOMING.unknown_cursor)
 
-		block:while_loop(condition.less_than(INCOMING.cursor, packet_length), function(block)
+		local loop_condition = condition.less_than(INCOMING.cursor, packet_length)
+		if is_server then
+			local player = block:parameter(1)
+			local player_parent = projection.index(player, constant.from_value("Parent"))
+			loop_condition = condition.aand(loop_condition, condition.not_equals(player_parent, constant.null))
+		end
+
+		block:while_loop(loop_condition, function(block)
 			local read_event_id = block:store(library.buffer.u8.read(control.advance(constant.one)))
 			block:if_chain(n_receivables + 1, function(index)
 				if index > n_receivables then
