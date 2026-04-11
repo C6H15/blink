@@ -161,7 +161,7 @@ builders.reference = table.freeze({
 		local fn_set = build_ty(props.ctx, props.attributes, ref)
 		block:call_fn(fn_set.write, { at }, {})
 	end,
-})
+}) :: TyBuilder
 
 builders.type_instantiation = table.freeze({
 	read = function(
@@ -179,7 +179,7 @@ builders.type_instantiation = table.freeze({
 		local fn_set = build_ty(props.ctx, props.attributes, instantiation)
 		block:call_fn(fn_set.write, { at }, {})
 	end,
-})
+}) :: TyBuilder
 
 builders.map = table.freeze({
 	read = function(props: ReadProps, block: Builder, map: ty.Map, into: LValue<any>?): Register<{ [any]: any }>
@@ -211,7 +211,7 @@ builders.map = table.freeze({
 			write_ty(props, block, map.value, value)
 		end)
 	end,
-})
+}) :: TyBuilder
 
 builders.array = table.freeze({
 	read = function(props: ReadProps, block: Builder, array: ty.Array, into: LValue<any>?): Register<{ any }>
@@ -236,7 +236,7 @@ builders.array = table.freeze({
 			write_ty(props, block, array.of, value)
 		end)
 	end,
-})
+}) :: TyBuilder
 
 builders.struct = table.freeze({
 	read = function(props: ReadProps, block: Builder, struct: ty.Struct, into: LValue<any>?): Register<any>
@@ -274,7 +274,7 @@ builders.struct = table.freeze({
 			write_ty(props, block, field.value, field_register)
 		end
 	end,
-})
+}) :: TyBuilder
 
 builders.discriminated_union = table.freeze({
 	read = function(props: ReadProps, block: Builder, enum: ty.DiscriminatedUnion, into: LValue<any>?)
@@ -339,7 +339,7 @@ builders.discriminated_union = table.freeze({
 				end
 		end)
 	end,
-})
+}) :: TyBuilder
 
 do
 	local KIND_PRIORITY: { [ty.TyKind]: number? } = {
@@ -577,7 +577,7 @@ do
 					end
 			end)
 		end,
-	})
+	}) :: TyBuilder
 end
 
 return table.freeze({

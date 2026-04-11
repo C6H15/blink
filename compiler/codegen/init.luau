@@ -377,7 +377,7 @@ local function gen_terminator(ctx: Context, terminator: lir.Terminator)
 		builder:append_indent()
 		local fn = lir.fn_from_id(lirr, terminator.fn)
 		for index, ret in terminator.rets do
-			if index == 1 and context.try_see_register(ctx, ret) then
+			if index == 1 and context.try_see_register(ctx, ret :: any) then
 				builder:append("local ")
 			elseif index > 1 then
 				builder:append(", ")
